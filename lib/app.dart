@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:to_do_list_mob_x/core/theme/app_theme.dart';
-import 'package:to_do_list_mob_x/data/local/task_dao.dart';
-import 'package:to_do_list_mob_x/presentation/home/views/home_view.dart';
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key, required this.taskDao});
-
-  final TaskDao taskDao;
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'To Do List with MobX',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      home: const HomeView(),
+      routerDelegate: Modular.routerDelegate,
+      routeInformationParser: Modular.routeInformationParser,
     );
   }
 }

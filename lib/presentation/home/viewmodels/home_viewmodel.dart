@@ -1,16 +1,20 @@
+import 'dart:async';
+
 import 'package:mobx/mobx.dart';
 import 'package:to_do_list_mob_x/data/repositories/task_repository.dart';
 import 'package:to_do_list_mob_x/models/task.dart';
-
 import 'package:uuid/uuid.dart';
 
 part 'home_viewmodel.g.dart';
 
 // ignore: library_private_types_in_public_api
-class HomeViewModel = _HomeViewModelBase with _$HomeViewModel;
+class HomeViewModel extends _HomeViewModelBase with _$HomeViewModel {
+  HomeViewModel(TaskRepository repo) : super(repo);
+}
 
 abstract class _HomeViewModelBase with Store {
   final TaskRepository _taskRepository;
+  StreamSubscription<List<Task>>? _sub;
 
   _HomeViewModelBase(this._taskRepository) {
     _loadTasks();
@@ -20,9 +24,17 @@ abstract class _HomeViewModelBase with Store {
   ObservableList<Task> tasks = ObservableList<Task>();
 
   void _loadTasks() {
-    _taskRepository.watchAllTasks().listen((data) {
-      tasks = ObservableList.of(data);
-    });
+    _sub = _taskRepository.watchAllTasks().listen(
+      (data) {
+        runInAction(() {
+          tasks = ObservableList.of(data);
+          // ou: tasks..clear()..addAll(data);
+        });
+      },
+      onError: (e, st) {
+        // log opcional
+      },
+    );
   }
 
   @action
@@ -32,7 +44,7 @@ abstract class _HomeViewModelBase with Store {
     DateTime? expireIn,
   }) async {
     final newTask = Task(
-      id: const Uuid().v4(),
+      id: Uuid().v4(),
       title: title,
       description: description,
       createdAt: DateTime.now(),
@@ -50,5 +62,10 @@ abstract class _HomeViewModelBase with Store {
   Future<void> toggleTaskCompleted(Task task) async {
     task.toggleCompleted();
     await _taskRepository.updateTask(task);
+  }
+
+  void dispose() {
+    _sub?.cancel();
+    _sub = null;
   }
 }

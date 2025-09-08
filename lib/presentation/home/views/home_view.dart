@@ -1,34 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:provider/provider.dart';
+// import 'package:flutter_modular/flutter_modular.dart';
 import 'package:to_do_list_mob_x/presentation/home/viewmodels/home_viewmodel.dart';
 import 'package:to_do_list_mob_x/shared/widgets/modal_new_task.dart';
 import 'package:to_do_list_mob_x/shared/widgets/to_do_item_widget.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({super.key});
+  const HomeView({super.key, required this.viewModel});
+  final HomeViewModel viewModel;
 
   @override
   State<HomeView> createState() => _HomeViewState();
 }
 
 class _HomeViewState extends State<HomeView> {
-  late final HomeViewModel viewModel;
   final TextEditingController _titlerController = TextEditingController();
   final TextEditingController _descriptionController =
       TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  late final HomeViewModel viewModel;
 
   @override
   void initState() {
     super.initState();
-    viewModel = Provider.of<HomeViewModel>(context, listen: false);
+    viewModel = widget.viewModel;
   }
 
   @override
   void dispose() {
     _titlerController.dispose();
     _descriptionController.dispose();
+    // viewModel.dispose();
     super.dispose();
   }
 
@@ -37,7 +39,7 @@ class _HomeViewState extends State<HomeView> {
       context: context,
       builder: (_) {
         return ModalNewTask(
-          viewModel: viewModel,
+          viewModel: widget.viewModel,
           formKey: _formKey,
           titleController: _titlerController,
           descriptionController: _descriptionController,
@@ -53,24 +55,25 @@ class _HomeViewState extends State<HomeView> {
       floatingActionButton: FloatingActionButton(
         onPressed: _showAddTaskDialog,
         backgroundColor: Colors.black,
-        child: Icon(Icons.add, color: Colors.white),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
       body: Column(
         children: [
           Expanded(
             child: Observer(
               builder: (_) {
-                if (viewModel.tasks.isEmpty) {
+                if (widget.viewModel.tasks.isEmpty) {
                   return const Center(child: Text('Lista Vazia'));
                 }
                 return ListView.builder(
-                  itemCount: viewModel.tasks.length,
+                  itemCount: widget.viewModel.tasks.length,
                   itemBuilder: (context, index) {
-                    final task = viewModel.tasks[index];
+                    final task = widget.viewModel.tasks[index];
                     return ToDoItemWidget(
                       task: task,
-                      onDelete: () => viewModel.removeTask(task.id),
-                      onToggle: () => viewModel.toggleTaskCompleted(task),
+                      onDelete: () => widget.viewModel.removeTask(task.id),
+                      onToggle: () =>
+                          widget.viewModel.toggleTaskCompleted(task),
                     );
                   },
                 );
