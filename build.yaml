@@ -1,0 +1,12 @@
+targets:
+  $default:
+    builders:
+      mobx_codegen|mobx_generator:
+        generate_for:
+          - lib/**.dart
+        options:
+          # Esta é a parte mais importante.
+          # Ela informa ao builder do MobX que ele pode depender
+          # de arquivos que terminam em .g.dart (como os do Drift).
+          required_inputs:
+            - .g.dart
