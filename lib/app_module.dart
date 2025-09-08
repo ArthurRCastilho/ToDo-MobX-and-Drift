@@ -30,6 +30,7 @@ class AppModule extends Module {
           // final viewModel = HomeViewModel(repository);
           // return HomeView(viewModel: viewModel);
 
+          // TODO!: Resolver problema de inicialização de app
           final db = AppDatabaseLocal();
           final dao = TaskDao(db);
           final repo = TaskRepository(dao);
