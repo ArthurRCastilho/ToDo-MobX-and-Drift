@@ -17,8 +17,22 @@ abstract class _HomeViewModelBase with Store {
   final TaskRepository _taskRepository = Modular.get<TaskRepository>();
   StreamSubscription<List<Task>>? _sub;
 
+  @observable
+  bool moreOptions = false;
+
+  @action
+  void expandedMoreOptions() {
+    moreOptions = !moreOptions;
+  }
+
   _HomeViewModelBase() {
     _loadTasks();
+  }
+
+  String? titleValidator(String? value) {
+    if (value == null || value.isEmpty) return 'Título é obrigatório';
+    if (value.length >= 50) return 'Título deve conter menos de 50 letras';
+    return null;
   }
 
   @observable
