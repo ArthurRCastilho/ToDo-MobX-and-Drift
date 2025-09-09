@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:mobx/mobx.dart';
 import 'package:to_do_list_mob_x/data/repositories/task_repository.dart';
 import 'package:to_do_list_mob_x/models/task.dart';
@@ -9,14 +10,14 @@ part 'home_viewmodel.g.dart';
 
 // ignore: library_private_types_in_public_api
 class HomeViewModel extends _HomeViewModelBase with _$HomeViewModel {
-  HomeViewModel(TaskRepository repo) : super(repo);
+  HomeViewModel();
 }
 
 abstract class _HomeViewModelBase with Store {
-  final TaskRepository _taskRepository;
+  final TaskRepository _taskRepository = Modular.get<TaskRepository>();
   StreamSubscription<List<Task>>? _sub;
 
-  _HomeViewModelBase(this._taskRepository) {
+  _HomeViewModelBase() {
     _loadTasks();
   }
 

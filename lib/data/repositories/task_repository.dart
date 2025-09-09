@@ -1,12 +1,13 @@
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:to_do_list_mob_x/data/local/app_database_local.dart';
 import 'package:to_do_list_mob_x/data/local/task_dao.dart';
 import 'package:to_do_list_mob_x/models/task.dart';
 import 'package:to_do_list_mob_x/models/task_mapper.dart';
 
 class TaskRepository {
-  final TaskDao _taskDao;
+  final TaskDao _taskDao = Modular.get<TaskDao>();
 
-  TaskRepository(this._taskDao);
+  TaskRepository();
 
   Stream<List<Task>> watchAllTasks() {
     return _taskDao.watchAllTasks().map((taskTableList) {

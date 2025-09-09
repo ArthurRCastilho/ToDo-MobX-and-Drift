@@ -9,15 +9,12 @@ import 'package:to_do_list_mob_x/presentation/home/views/home_view.dart';
 class AppModule extends Module {
   @override
   void binds(Injector i) {
-    i.addLazySingleton<AppDatabaseLocal>(() => AppDatabaseLocal());
-    i.addLazySingleton<TaskDao>((i) => TaskDao(i.get<AppDatabaseLocal>()));
-    i.addLazySingleton<TaskRepository>(
-      (i) => TaskRepository(i.get<TaskDao>()),
-    );
+    i.addLazySingleton(AppDatabaseLocal.new);
+    i.addLazySingleton(TaskDao.new);
 
-    i.addLazySingleton<HomeViewModel>(
-      (i) => HomeViewModel(i.get<TaskRepository>()),
-    );
+    i.addLazySingleton(TaskRepository.new);
+
+    i.addLazySingleton(HomeViewModel.new);
   }
 
   @override
@@ -26,16 +23,7 @@ class AppModule extends Module {
       '/',
       child: (_) {
         try {
-          // final repository = Modular.get<TaskRepository>();
-          // final viewModel = HomeViewModel(repository);
-          // return HomeView(viewModel: viewModel);
-
-          // TODO!: Resolver problema de inicialização de app
-          final db = AppDatabaseLocal();
-          final dao = TaskDao(db);
-          final repo = TaskRepository(dao);
-          final vm = HomeViewModel(repo);
-          return HomeView(viewModel: vm);
+          return HomeView();
         } catch (e, st) {
           return Scaffold(
             body: SingleChildScrollView(

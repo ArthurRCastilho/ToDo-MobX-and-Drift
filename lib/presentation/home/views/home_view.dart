@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_modular/flutter_modular.dart';
 // import 'package:flutter_modular/flutter_modular.dart';
 import 'package:to_do_list_mob_x/presentation/home/viewmodels/home_viewmodel.dart';
 import 'package:to_do_list_mob_x/shared/widgets/modal_new_task.dart';
 import 'package:to_do_list_mob_x/shared/widgets/to_do_item_widget.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({super.key, required this.viewModel});
-  final HomeViewModel viewModel;
+  const HomeView({super.key});
 
   @override
   State<HomeView> createState() => _HomeViewState();
@@ -23,7 +23,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     super.initState();
-    viewModel = widget.viewModel;
+    viewModel = Modular.get<HomeViewModel>();
   }
 
   @override
@@ -39,7 +39,7 @@ class _HomeViewState extends State<HomeView> {
       context: context,
       builder: (_) {
         return ModalNewTask(
-          viewModel: widget.viewModel,
+          viewModel: viewModel,
           formKey: _formKey,
           titleController: _titlerController,
           descriptionController: _descriptionController,
@@ -62,18 +62,17 @@ class _HomeViewState extends State<HomeView> {
           Expanded(
             child: Observer(
               builder: (_) {
-                if (widget.viewModel.tasks.isEmpty) {
+                if (viewModel.tasks.isEmpty) {
                   return const Center(child: Text('Lista Vazia'));
                 }
                 return ListView.builder(
-                  itemCount: widget.viewModel.tasks.length,
+                  itemCount: viewModel.tasks.length,
                   itemBuilder: (context, index) {
-                    final task = widget.viewModel.tasks[index];
+                    final task = viewModel.tasks[index];
                     return ToDoItemWidget(
                       task: task,
-                      onDelete: () => widget.viewModel.removeTask(task.id),
-                      onToggle: () =>
-                          widget.viewModel.toggleTaskCompleted(task),
+                      onDelete: () => viewModel.removeTask(task.id),
+                      onToggle: () => viewModel.toggleTaskCompleted(task),
                     );
                   },
                 );
